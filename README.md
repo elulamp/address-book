@@ -9,4 +9,4 @@ Application that reads from 'AddressBook' file and answers the following questio
 
 
 After building one can execute it by issueing following command:
-java -cp {path-to-artifact}/address-book-1.0-SNAPSHOT.jar gumtreeuk.Main
+<code>java -cp {path-to-artifact}/address-book-1.0-SNAPSHOT.jar gumtreeuk.Main</code>
