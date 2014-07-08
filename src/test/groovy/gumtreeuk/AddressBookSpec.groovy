@@ -18,21 +18,16 @@ class AddressBookSpec extends Specification {
         return sameBeanAs(contact)
     }
 
-    protected static toLocalDate = toLocalDateFunc()
+    protected static toLocalDate(String s) {
+        LocalDate.parse(s, Constants.DATE_TIME_FORMATTER).with({ Temporal temporal ->
+            LocalDate now = LocalDate.now();
 
-    protected static def toLocalDateFunc() {
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/uu");
-        return { String s ->
-            LocalDate.parse(s, format).with({ Temporal temporal ->
-                LocalDate now = LocalDate.now();
+            if (now.getYear() < temporal.query(TemporalQueries.localDate()).getYear()) {
+                return temporal.minus(100, ChronoUnit.YEARS);
+            }
 
-                if (now.getYear() < temporal.query(TemporalQueries.localDate()).getYear()) {
-                    return temporal.minus(100, ChronoUnit.YEARS);
-                }
-
-                return temporal
-            } as TemporalAdjuster);
-        }
+            return temporal
+        } as TemporalAdjuster);
     }
 
     protected def getPath(String str) {

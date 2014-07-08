@@ -14,6 +14,11 @@ public class Contact {
         this.birthday = birthday;
     }
 
+    @Override
+    public String toString() {
+        return String.format("'%s, %s, %s'", name, gender, birthday.format(Constants.DATE_TIME_FORMATTER));
+    }
+
     public static class Builder {
         private String name = "John Doe";
         private Gender gender = Gender.MALE;

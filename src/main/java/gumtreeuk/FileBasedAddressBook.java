@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalQueries;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ public class FileBasedAddressBook implements AddressBook {
     private static final int NAME = 0;
     private static final int GENDER = 1;
     private static final int BIRTHDAY = 2;
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yy");
 
     private final Path file;
 
@@ -64,7 +62,7 @@ public class FileBasedAddressBook implements AddressBook {
     }
 
     private static LocalDate toLocalDate(CharSequence value) {
-        return LocalDate.parse(value, DATE_TIME_FORMATTER).with(temporal -> {
+        return LocalDate.parse(value, Constants.DATE_TIME_FORMATTER).with(temporal -> {
             // this is needed because Java 8 interprets two digit years as years between 2000-2099
             LocalDate now = LocalDate.now();
 
