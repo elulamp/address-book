@@ -1,13 +1,18 @@
 package gumtreeuk;
 
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class Main {
 
-    public static void main(String[] args) throws URISyntaxException {
+    public static void main(String[] args) throws URISyntaxException, IOException {
 
         String addressBookResource = "AddressBook";
 
@@ -28,7 +33,37 @@ public class Main {
 
     }
 
-    private static Path getPath(String str) throws URISyntaxException {
-        return Paths.get(Main.class.getClassLoader().getResource(str).toURI());
+    private static Path getPath(String resStr) throws URISyntaxException, IOException {
+
+        if (isInsideJar(resStr)) {
+            return pathFromJar(resStr);
+        }
+
+        return pathFromDisk(resStr);
+    }
+
+    private static Path pathFromJar(String resStr) throws IOException {
+        InputStream is = null;
+        try {
+            is = Main.class.getClassLoader().getResourceAsStream(resStr);
+            Path tempFile = Files.createTempFile("address-book", null);
+            tempFile.toFile().deleteOnExit();
+            Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            return tempFile;
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+    }
+
+    private static Path pathFromDisk(String resStr) throws URISyntaxException {
+        return Paths.get(Main.class.getClassLoader().getResource(resStr).toURI());
+    }
+
+    private static boolean isInsideJar(String resStr) {
+        URL res = Main.class.getClassLoader().getResource(resStr);
+
+        return res != null && res.toString().startsWith("jar:");
     }
 }
