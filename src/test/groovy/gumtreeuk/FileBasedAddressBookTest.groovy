@@ -1,17 +1,12 @@
 package gumtreeuk
 
-import spock.lang.Specification
+import org.hamcrest.Matchers
 
-import java.nio.file.Paths
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs
 import static gumtreeuk.Gender.*
 import static org.hamcrest.Matchers.containsInAnyOrder
 import static spock.util.matcher.HamcrestSupport.expect
 
-class FileBasedAddressBookTest extends Specification {
+class FileBasedAddressBookTest extends AddressBookSpec {
 
     def "should read all the contacts info from 'AddressBook' file"() {
         given:
@@ -31,18 +26,17 @@ class FileBasedAddressBookTest extends Specification {
             wes = new Contact("Wes Jackson", MALE, toLocalDate("14/08/74"))
     }
 
-    private static def contact(Contact contact) {
-        return sameBeanAs(contact)
-    }
+    def "finds contacts by name from address book"() {
+        given:
+            def addressBook = new FileBasedAddressBook(getPath("AddressBook"));
 
-    private static toLocalDate = toLocalDateFunc()
+        when:
+            def retrievedContact = addressBook.findContactByName("Bill McKnight")
 
-    private static def toLocalDateFunc() {
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yy");
-        return {String s -> LocalDate.parse(s, format)}
-    }
+        then:
+            expect retrievedContact.get(), Matchers.is(contact(bill))
 
-    private def getPath(String str) {
-        return Paths.get(getClass().getResource(str).toURI())
+        where:
+            bill = new Contact("Bill McKnight", MALE, toLocalDate("16/03/77"))
     }
 }

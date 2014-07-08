@@ -5,8 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalQueries;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FileBasedAddressBook implements AddressBook {
 
@@ -27,6 +30,11 @@ public class FileBasedAddressBook implements AddressBook {
         return readContactsFromFile();
     }
 
+    @Override
+    public Optional<Contact> findContactByName(final String name) {
+        return getContacts().stream().filter(contact -> name.equalsIgnoreCase(contact.name)).findFirst();
+    }
+
     private List<Contact> readContactsFromFile() {
 
         List<String> lines;
@@ -36,7 +44,7 @@ public class FileBasedAddressBook implements AddressBook {
             throw new IllegalStateException(String.format("Was not able to read from '%s'", file));
         }
 
-        List<Contact> result = new ArrayList<Contact>(lines.size());
+        List<Contact> result = new ArrayList<>(lines.size());
         for (String line : lines) {
             String[] values = line.split(VALUE_DELIMITER);
 
@@ -56,6 +64,15 @@ public class FileBasedAddressBook implements AddressBook {
     }
 
     private static LocalDate toLocalDate(CharSequence value) {
-        return LocalDate.parse(value, DATE_TIME_FORMATTER);
+        return LocalDate.parse(value, DATE_TIME_FORMATTER).with(temporal -> {
+            // this is needed because Java 8 interprets two digit years as years between 2000-2099
+            LocalDate now = LocalDate.now();
+
+            if (now.getYear() < temporal.query(TemporalQueries.localDate()).getYear()) {
+                return temporal.minus(100, ChronoUnit.YEARS);
+            }
+
+            return temporal;
+        });
     }
 }
