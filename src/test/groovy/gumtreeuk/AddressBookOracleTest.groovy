@@ -26,6 +26,18 @@ class AddressBookOracleTest extends AddressBookSpec {
             wes = new Contact("Wes Jackson", MALE, toLocalDate("14/08/74"))
     }
 
+    def "should not return a contact when asking who is the oldest contact when address book is empty"() {
+        given:
+            def emptyAddressBookOracle = new AddressBookOracle(new FileBasedAddressBook(getPath("EmptyAddressBook")))
+
+        when:
+            def somebody = emptyAddressBookOracle.tellMeWhoIsTheOldestContactInTheAddressBook();
+
+        then:
+            !somebody.isPresent()
+
+    }
+
     def "should tell you age difference between two contacts in days"() {
         expect:
             that oracle.tellMeAgeDifferenceBetweenContactsInDays(bill, paul), Matchers.is(2862L)

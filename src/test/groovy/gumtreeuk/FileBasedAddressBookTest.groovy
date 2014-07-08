@@ -39,4 +39,27 @@ class FileBasedAddressBookTest extends AddressBookSpec {
         where:
             bill = new Contact("Bill McKnight", MALE, toLocalDate("16/03/77"))
     }
+
+    def "should return empty list when reading contacts info from 'EmptyAddressBook'"() {
+        given:
+            def addressBook = new FileBasedAddressBook(getPath("EmptyAddressBook"));
+
+        when:
+            def contacts = addressBook.getContacts();
+
+        then:
+            contacts.isEmpty()
+    }
+
+    def "should not find a contact by name from address book backed by 'EmptyAddressBook' file"() {
+        given:
+            def addressBook = new FileBasedAddressBook(getPath("EmptyAddressBook"));
+
+        when:
+            def retrievedContact = addressBook.findContactByName("Some Contact")
+
+        then:
+            !retrievedContact.isPresent()
+
+    }
 }
