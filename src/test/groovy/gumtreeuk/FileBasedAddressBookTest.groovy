@@ -26,7 +26,7 @@ class FileBasedAddressBookTest extends AddressBookSpec {
             wes = new Contact("Wes Jackson", MALE, toLocalDate("14/08/74"))
     }
 
-    def "finds contacts by name from address book"() {
+    def "should find contact by name from address book backed by 'AddressBook' file"() {
         given:
             def addressBook = new FileBasedAddressBook(getPath("AddressBook"));
 

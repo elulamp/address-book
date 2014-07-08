@@ -35,7 +35,7 @@ class AddressBookOracleTest extends AddressBookSpec {
             paul = "Paul Robinson"
     }
 
-    def "fails if you ask age difference for contacts that do not exist in address book"() {
+    def "should fail if you ask age difference for contacts that do not exist in address book"() {
         when:
             oracle.tellMeAgeDifferenceBetweenContactsInDays(bill, unknownContact)
 
